@@ -1,6 +1,37 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+// Part Two
+
+int check_x_has_values(int row, int col, char crossword[142][142],
+    char left_up, char left_down , char right_up, char right_down) {
+    if (row < 1 || col < 1) return 0;
+    return crossword[row-1][col-1] == left_up && crossword[row-1][col+1] == right_up &&
+        crossword[row+1][col-1] == left_down && crossword[row+1][col+1] == right_down;
+}
+
+int check_for_mas(int row, int col, char crossword[142][142]) {
+    if (row < 1 || col < 1) return 0;
+    if (crossword[row][col] != 'A') return 0;
+    return (
+        check_x_has_values(row, col, crossword, 'M', 'M', 'S', 'S') ||
+        check_x_has_values(row, col, crossword, 'S', 'S','M', 'M') ||
+        check_x_has_values(row, col, crossword, 'M', 'S','M', 'S') ||
+        check_x_has_values(row, col, crossword, 'S', 'M','S', 'M')
+        );
+}
+
+int iterate_through_matrix_mas(char crossword[142][142]) {
+    int count = 0;
+    for (int i = 0; i < 142; i++) {
+        for (int j = 0; j < 142; j++) {
+            count += check_for_mas(i, j, crossword);
+        }
+    }
+    return count;
+}
+
+// Part One
 int check_is_xmas(char x, char m, char a, char s) {
     return x == 'X' && m == 'M' && a == 'A' && s == 'S';
 }
@@ -96,7 +127,7 @@ int check_all_possibilities(int row, int col, char crossword[142][142]) {
     return count;
 }
 
-int iterate_through_matrix(char crossword[142][142]) {
+int iterate_through_matrix_xmas(char crossword[142][142]) {
     int count = 0;
     for (int i = 0; i < 142; i++) {
         for (int j = 0; j < 142; j++) {
@@ -122,6 +153,7 @@ int main(void) {
         fgets(crossword[i], 142, fptr);
     }
 
-    printf("%d", iterate_through_matrix(crossword));
+    printf("Part One: %d\n", iterate_through_matrix_xmas(crossword));
+    printf("Part Two: %d\n", iterate_through_matrix_mas(crossword));
     return 0;
 }
